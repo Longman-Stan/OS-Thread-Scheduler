@@ -32,9 +32,10 @@ struct hash *initialize_hash(int size)
 void destroy_hash(struct hash *hash)
 {
 	int i;
-	for (i = 0; i < hash->size; i++) {
+
+	for (i = 0; i < hash->size; i++)
 		destroy_queue(hash->queues[i]);
-	}
+
 	free(hash->queues);
 	free(hash);
 }
@@ -42,6 +43,7 @@ void destroy_hash(struct hash *hash)
 int hash_insert(struct hash *hash, struct so_thread *thread)
 {
 	unsigned long key;
+
 	key = thread->tid % hash->size;
 	return insert_into_queue(thread, hash->queues[key]);
 }
@@ -50,6 +52,7 @@ struct so_thread *hash_get_value(struct hash *hash, tid_t tid)
 {
 	unsigned long key;
 	struct q_node *node_crt;
+
 	key = tid % hash->size;
 
 	node_crt = hash->queues[key]->beginning;
@@ -76,9 +79,8 @@ void hash_delete(struct hash *hash, tid_t tid)
 				if (hash->queues[key]->beginning->next == NULL)
 					hash->queues[key]->end = NULL;
 				hash->queues[key]->beginning = node_crt->next;
-			} else {
+			} else
 				prec->next = node_crt->next;
-			}
 			free(node_crt);
 			return;
 		}

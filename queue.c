@@ -1,7 +1,6 @@
 #include "queue.h"
 
-
-struct queue *initialize_queue()
+struct queue *initialize_queue(void)
 {
 	struct queue *q;
 
@@ -16,6 +15,7 @@ struct queue *initialize_queue()
 int destroy_queue(struct queue *queue)
 {
 	struct q_node *next_node;
+
 	if (queue == NULL)
 		return MALLOC_NULL_POINTER;
 	next_node = queue->beginning;
@@ -32,15 +32,15 @@ int destroy_queue(struct queue *queue)
 int insert_into_queue(struct so_thread *thread, struct queue *queue)
 {
 	struct q_node *new_node;
+
 	new_node = (struct q_node *) malloc(sizeof(struct q_node));
 	if (new_node == NULL)
 		return MALLOC_NULL_POINTER;
 	new_node->info = thread;
 	new_node->next = NULL;
 
-	if (queue->end) {
+	if (queue->end)
 		queue->end->next  = new_node;
-	}
 
 	if (queue->beginning == NULL)
 		queue->beginning = new_node;

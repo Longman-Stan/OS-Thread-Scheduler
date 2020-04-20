@@ -15,11 +15,10 @@ struct queue {
 	struct q_node *beginning, *end;
 };
 
-struct queue *initialize_queue();
+struct queue *initialize_queue(void);
 
 int destroy_queue(struct queue *queue);
 
 int insert_into_queue(struct so_thread *thread, struct queue *queue);
 
 struct so_thread *pop_queue(struct queue *queue);
-

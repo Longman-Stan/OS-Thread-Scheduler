@@ -12,9 +12,9 @@ struct so_thread *initialize_so_thread(unsigned int priority,
 	struct so_thread *thread;
 
 	thread = (struct so_thread *)malloc(sizeof(struct so_thread));
-	if (thread == NULL) {
+	if (thread == NULL)
 		return FAILED_THREAD_INIT;
-	}
+
 	if (sem_init(&thread->semaphore, 0, 0)) {
 		free(thread);
 		return (struct so_thread *)BARRIER_INIT_FAILURE;

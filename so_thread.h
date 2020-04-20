@@ -23,6 +23,8 @@ struct so_thread {
 	so_handler *handler;
 };
 
-struct so_thread *initialize_so_thread(unsigned int priority, so_handler *handler);
+struct so_thread *initialize_so_thread(
+	unsigned int priority,
+	so_handler *handler);
 
 void destroy_so_thread(struct so_thread *thread);

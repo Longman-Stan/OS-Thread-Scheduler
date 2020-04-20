@@ -29,8 +29,8 @@ typedef DWORD tid_t;
 #endif
 
 /*
-* error codes
-*/
+ * error codes
+ */
 #define FAILED_MALLOC -12
 #define SCHED_INITIALIZE_SUCCESS 0
 #define SCHED_ALREADY_INITIALIZED -1
@@ -40,8 +40,8 @@ typedef DWORD tid_t;
 #define WAIT_SUCCESS 0
 
 /*
-* constants
-*/
+ * constants
+ */
 #define HASH_SIZE 1013
 
 /*
@@ -112,4 +112,3 @@ DECL_PREFIX void so_end(void);
 #endif
 
 #endif /* SO_SCHEDULER_H_ */
-
