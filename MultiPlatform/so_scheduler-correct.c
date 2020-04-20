@@ -13,9 +13,9 @@ inline static void join(tid_t tid)
 	pthread_join(tid, NULL);
 }
 
-static inline void semaphore_wait(SEM_T *semaphore)
+static inline void semaphore_wait(SEM_T sem)
 {
-	sem_wait(semaphore);
+	sem_wait(&sem);
 }
 
 static inline void thread_create(struct so_thread *thread)
@@ -23,9 +23,9 @@ static inline void thread_create(struct so_thread *thread)
 	pthread_create(&thread->tid, NULL, thread_function_wrapper, thread);
 }
 
-static inline void semaphore_post(SEM_T *semaphore)
+static inline void semaphore_post(SEM_T semaphore)
 {
-	sem_post(semaphore);
+	sem_post(&semaphore);
 }
 
 #elif defined(_WIN32)
@@ -38,9 +38,9 @@ static __inline void join(tid_t tid)
 						INFINITE);
 }
 
-static __inline void semaphore_wait(SEM_T *semaphore)
+static __inline void semaphore_wait(SEM_T sem)
 {
-	WaitForSingleObject(*semaphore, INFINITE);
+	WaitForSingleObject(sem, INFINITE);
 }
 
 static __inline void thread_create(struct so_thread *thread)
@@ -53,9 +53,9 @@ static __inline void thread_create(struct so_thread *thread)
 		&thread->tid);
 }
 
-static __inline void semaphore_post(SEM_T *semaphore)
+static __inline void semaphore_post(SEM_T semaphore)
 {
-	ReleaseSemaphore(*semaphore,
+	ReleaseSemaphore(semaphore,
 						1,
 						NULL);
 }
@@ -216,7 +216,7 @@ end:
 		scheduler->current_thread = myself;
 	}
 
-	semaphore_post(&scheduler->current_thread->semaphore);
+	semaphore_post(scheduler->current_thread->semaphore);
 	CRITICAL_SECTION_LEAVE(&scheduler->scheduler_opperation);
 }
 
@@ -234,8 +234,8 @@ static WRAPPER_RET WRAPPER_API thread_function_wrapper(void *arg)
 
 	insert_into_queue(this_thread, scheduler->all_threads);
 	CRITICAL_SECTION_LEAVE(&scheduler->scheduler_opperation);
-	semaphore_post(&this_thread->fork_sem);
-	semaphore_wait(&this_thread->semaphore);
+	semaphore_post(this_thread->fork_sem);
+	semaphore_wait(this_thread->semaphore);
 	(this_thread->handler)(this_thread->priority);
 	this_thread->status = TERMINATED;
 	CRITICAL_SECTION_ENTER(&scheduler->scheduler_opperation);
@@ -259,11 +259,11 @@ DECL_PREFIX tid_t so_fork(so_handler *func, unsigned int priority)
 	CRITICAL_SECTION_LEAVE(&scheduler->scheduler_opperation);
 	thread = initialize_so_thread(priority, func);
 	thread_create(thread);
-	semaphore_wait(&thread->fork_sem);
+	semaphore_wait(thread->fork_sem);
 	check_scheduler(myself);
 
 	if (myself != NULL)
-		semaphore_wait(&myself->semaphore);
+		semaphore_wait(myself->semaphore);
 
 	return thread->tid;
 }
@@ -283,7 +283,7 @@ DECL_PREFIX int so_wait(unsigned int io)
 	insert_into_queue(myself, scheduler->wait_queue[io]);
 	CRITICAL_SECTION_LEAVE(&scheduler->scheduler_opperation);
 	check_scheduler(myself);
-	semaphore_wait(&myself->semaphore);
+	semaphore_wait(myself->semaphore);
 	return WAIT_SUCCESS;
 }
 
@@ -307,7 +307,7 @@ DECL_PREFIX int so_signal(unsigned int io)
 	}
 	CRITICAL_SECTION_LEAVE(&scheduler->scheduler_opperation);
 	check_scheduler(myself);
-	semaphore_wait(&myself->semaphore);
+	semaphore_wait(myself->semaphore);
 	return num_woken;
 }
 
@@ -320,7 +320,7 @@ DECL_PREFIX void so_exec(void)
 	myself = hash_get_value(scheduler->thread_hash, SELF_TID);
 	CRITICAL_SECTION_LEAVE(&scheduler->scheduler_opperation);
 	check_scheduler(myself);
-	semaphore_wait(&myself->semaphore);
+	semaphore_wait(myself->semaphore);
 }
 
 DECL_PREFIX void so_end(void)
@@ -357,3 +357,4 @@ DECL_PREFIX void so_end(void)
 	free(scheduler);
 	scheduler = NULL;
 }
+
