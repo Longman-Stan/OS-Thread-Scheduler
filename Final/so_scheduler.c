@@ -108,8 +108,11 @@ DECL_PREFIX int so_init(unsigned int time_quantum, unsigned int io)
 	scheduler->supported_io_num = io;
 	scheduler->use_fcfs = False;
 	scheduler->enable_log = False;
-	//use_file();
-	//printf("%u %u\n", scheduler->time_quantum, scheduler->supported_io_num);
+
+#ifdef BONUS
+	use_file();
+	printf("%u %u\n", scheduler->time_quantum, scheduler->supported_io_num);
+#endif
 
 	scheduler->thread_hash = initialize_hash(HASH_SIZE);
 	if (scheduler->thread_hash == (struct hash *)FAILED_MALLOC) {
