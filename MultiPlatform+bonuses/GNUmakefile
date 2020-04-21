@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -fPIC -Wall
 build: libscheduler.so
 
-bonus_tests: bonus_test_exec bonus_test_wait config_params
+bonus_tests: bonus_test_exec bonus_test_wait config_params libscheduler.so
 
 bonus_test_exec: libscheduler.so bonus_test_exec.c
 	$(CC) -Wall -o bonus_test_exec bonus_test_exec.c -L . -lscheduler -lpthread -lrt

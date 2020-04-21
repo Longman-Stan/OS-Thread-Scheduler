@@ -6,6 +6,8 @@ struct so_logger *initialize_logger(unsigned int window_size)
 	struct so_logger *logger;
 	time_t crt_time;
 	char *log_name;
+	size_t len;
+	unsigned int i;
 
 	log_name = (char *) calloc(100, sizeof(char));
 	if (log_name == NULL)
@@ -22,7 +24,16 @@ struct so_logger *initialize_logger(unsigned int window_size)
 
 	crt_time = time(NULL);
 	strcat(log_name, ctime(&crt_time));
-	log_name[strlen(log_name) - 1] = '\0';
+	len = strlen(log_name);
+	log_name[len - 1] = '\0';
+	
+#ifdef _WIN32
+	for (i = 0; i < len; i++)
+		if (log_name[i] == ':')
+			log_name[i] = ';';
+	strcat(log_name,".txt");
+#endif
+
 	logger->log_file = fopen(log_name, "w");
 
 	if (logger->log_file == NULL) {
@@ -63,7 +74,7 @@ static void process_message(struct so_logger *logger, char *message)
 
 static void append_num(char *string, unsigned long number)
 {
-	u_int32_t len;
+	unsigned int len;
 	unsigned long mirrored;
 
 	len = strlen(string);
@@ -159,7 +170,7 @@ void log_wait(struct so_logger *logger, tid_t thread_id, unsigned int io)
 		return;
 
 	append_num(log_message, thread_id);
-	strcat(log_message, " waits after");
+	strcat(log_message, " waits after ");
 	append_num(log_message, io);
 
 	process_message(logger, log_message);
@@ -194,7 +205,7 @@ void log_error(struct so_logger *logger, const char *msg)
 
 void flush_log(struct so_logger *logger)
 {
-	int i;
+	unsigned int i;
 	char *log_message;
 	struct q_node *crt_node;
 

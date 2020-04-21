@@ -1,19 +1,19 @@
-CFLAGS = /nologo /W3 /EHsc
+CFLAGS = /nologo /W3 /EHsc /D_CRT_SECURE_NO_DEPRECATE
 CC = cl
 LINK = link
 
 build: libscheduler.dll
 
-bonus_tests: bonus_test_exec bonus_test_wait config_params
+bonus_tests:  libscheduler.dll bonus_test_exec bonus_test_wait config_params
 
 bonus_test_exec: bonus_test_exec.c
-	$(CC) /W3 /Fobonus_test_exec.exe bonus_test_exec.c /LIBPATH:. libscheduler.lib
+	$(CC) /W3 /Fo$@ bonus_test_exec.c libscheduler.lib
 
 bonus_test_wait: bonus_test_wait.c
-	$(CC) /W3 /Fobonus_test_wait.exe bonus_test_wait.c /LIBPATH:. libscheduler.lib
+	$(CC) /W3 /Fo$@ bonus_test_wait.c libscheduler.lib
 
 config_params: config_params.c
-	$(CC) /W3 /Foconfig_params.exe config_params.c
+	$(CC) /W3 /D_CRT_SECURE_NO_DEPRECATE config_params.c so_sched_initializer.c
 
 libscheduler.dll: queue.obj hash.obj so_scheduler.obj so_thread.obj so_sched_initializer.obj so_logger.obj
 	$(LINK) /nologo /dll /out:$@ /implib:libscheduler.lib $**
@@ -42,4 +42,5 @@ clean:
 
 
 clean_bonus:
-	rm bonus_test_exec bonus_test_wait config_params
+	del /Q bonus_test_exec.obj bonus_test_wait.obj config_params.obj 2>NUL
+	del /Q bonus_test_exec.exe bonus_test_wait.exe config_params.exe 2>NUL

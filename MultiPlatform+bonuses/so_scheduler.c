@@ -67,6 +67,7 @@ static void use_file(void)
 {
 	struct sched_info *sched_info;
 
+	scheduler->use_fcfs = False;
 	scheduler->enable_log = False;
 
 	sched_info = initialize_sched_info();
@@ -76,19 +77,24 @@ static void use_file(void)
 			scheduler->supported_io_num =
 				sched_info->supported_io_num;
 			scheduler->enable_log = sched_info->enable_log;
-
 			if (scheduler->enable_log) {
 				scheduler->logger = initialize_logger(
 					sched_info->log_window_size);
 				if (scheduler->logger == INVALID_LOGGER)
 					scheduler->enable_log = False;
+				else
+					printf("logging enabled\n");
 			}
 
 			scheduler->use_fcfs = sched_info->use_fcfs;
-			if (scheduler->use_fcfs == True)
+			if (scheduler->use_fcfs == True) {
+				printf("First come firt served enabled\n");
 				scheduler->time_quantum = 1;
+			}
 		}
 	}
+
+	free(sched_info);
 }
 
 DECL_PREFIX int so_init(unsigned int time_quantum, unsigned int io)
@@ -183,7 +189,6 @@ DECL_PREFIX int so_init(unsigned int time_quantum, unsigned int io)
 	use_file();
 	printf("%u %u\n", scheduler->time_quantum, scheduler->supported_io_num);
 	scheduler->current_thread = NULL;
-
 	return SCHED_INITIALIZE_SUCCESS;
 }
 

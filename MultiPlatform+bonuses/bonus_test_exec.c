@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #define SO_MAX_EXECUTION_TIME 679
 
 static unsigned int tasks_no;
@@ -41,7 +42,7 @@ int main(void)
 {
 	exec_time = 0;
 	tasks_no = 0;
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 	so_init(5, 256);
 
 	so_fork(bonus_test, rand() % 5);

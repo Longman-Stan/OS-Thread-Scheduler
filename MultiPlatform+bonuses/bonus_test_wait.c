@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 static void bonus_test_wait4(unsigned int priority)
 {
@@ -41,7 +42,7 @@ static void bonus_test_wait1(unsigned int priority)
 
 int main(void)
 {
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 	so_init(5, 256);
 
 	so_fork(bonus_test_wait1, rand() % 5);
