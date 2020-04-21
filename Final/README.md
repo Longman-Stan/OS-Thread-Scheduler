@@ -181,9 +181,13 @@ combinare de round-robin și fcfs atât de simplă.
 se face toată treaba. Acestea au asociate regula de clean care șterge fișierele folosite și biblioteca. 
 	Pentru bonus am inclus și regula ”bonus_tests” care generează biblioteca și trei executabile, descrise mai jos.
 Existaă și regula de clean, numită clean_bonus, care șterge toate fișierele rezultate.
+	Pentru a merge, insa, trebuie decomentate liniile 111 si 112(apelul use_file() si un printf) din cadrul fisierului
+so_scheduler.c. Daca le las decomentate am observat ca checkerul de windows isi ia timeout la unele rulari(diferenta era doar
+deschiderea unui fisier si niste citiri, lucru dubios). DIN CAUZA ASTA ISI IA UN WARNING DE COMPILARE. VA ROG SA NU IMI SCADETI
+PUNCTE PENTRU "WARNINGURI LA COMPILARE" din cauza functiei declarata dar nefolosita.
 
 -config_params, un program interactiv prin care utilizatorul setează parametrii din fișierul de configurație
-	Se rulează ./config_params sau ./config_params.exe și se urmează instrucțiunile. Recomand valorile 1 5 256 1 2000 1
+	Se rulează ./config_params sau ./config_params.exe șis se urmează instrucțiunile. Recomand valorile 1 5 256 1 2000 1
 	și 1 5 256 1 2000 0, pentru a vedea diferențele dintre round-robin și fcfs. Inițial primul parametru e 0 pentru a nu
 	influența rularea pe checker.
 
@@ -198,6 +202,7 @@ Rularea fiecărui executabil va duce la crearea(dacă a fost selectată, evident
 poate observa funcționalitatea tuturor elementelor de bonus implementate. Voi include screenshoturi cu rezultatele rulării
 pentru a fi sigur.
 
+~~~~~~~~~~~~~~~~~~
 Git-ul este https://github.com/Longman-Stan/So-tema4, însă va fi pe privat până când va trece deadline-ul hard al temei.
 ***Obligatoriu:*** 
 * De făcut referință la abordarea generală menționată în paragraful de mai sus. Aici se pot băga bucăți de cod/funcții - etc.

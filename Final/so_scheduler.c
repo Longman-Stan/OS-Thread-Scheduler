@@ -67,9 +67,6 @@ static void use_file(void)
 {
 	struct sched_info *sched_info;
 
-	scheduler->use_fcfs = False;
-	scheduler->enable_log = False;
-
 	sched_info = initialize_sched_info();
 	if (sched_info != INVALID_SCHED_INFO_INITIALIZE) {
 		if (sched_info->use_file) {
@@ -109,8 +106,10 @@ DECL_PREFIX int so_init(unsigned int time_quantum, unsigned int io)
 
 	scheduler->time_quantum = time_quantum;
 	scheduler->supported_io_num = io;
-	use_file();
-	printf("%u %u\n", scheduler->time_quantum, scheduler->supported_io_num);
+	scheduler->use_fcfs = False;
+	scheduler->enable_log = False;
+	//use_file();
+	//printf("%u %u\n", scheduler->time_quantum, scheduler->supported_io_num);
 
 	scheduler->thread_hash = initialize_hash(HASH_SIZE);
 	if (scheduler->thread_hash == (struct hash *)FAILED_MALLOC) {
@@ -196,7 +195,7 @@ static struct so_thread *pop_next_running_thread(void)
 {
 	int i;
 
-	if (scheduler->use_fcfs)
+	if (scheduler->use_fcfs == True)
 		return pop_queue(scheduler->ready_queue[FCFS_QUEUE]);
 
 	for (i = SO_MAX_PRIO; i >= 0; i--)
@@ -210,7 +209,7 @@ static struct so_thread *get_next_running_thread(void)
 {
 	int i;
 
-	if (scheduler->use_fcfs)
+	if (scheduler->use_fcfs == True)
 		return scheduler->ready_queue[FCFS_QUEUE]->beginning->info;
 
 	for (i = SO_MAX_PRIO; i >= 0; i--)
@@ -247,7 +246,7 @@ static void check_scheduler(struct so_thread *myself)
 		 *insert e din cauza checkstyle
 		 *altfel imi zice "more than 80 chars..."
 		 */
-				if (scheduler->use_fcfs)
+				if (scheduler->use_fcfs == True)
 					insert_into_queue(myself,
 					scheduler->ready_queue[FCFS_QUEUE]);
 				else
@@ -285,7 +284,7 @@ static WRAPPER_RET WRAPPER_API thread_function_wrapper(void *arg)
 	CRITICAL_SECTION_ENTER(&scheduler->scheduler_opperation);
 	hash_insert(scheduler->thread_hash, this_thread);
 
-	if (scheduler->use_fcfs)
+	if (scheduler->use_fcfs == True)
 		insert_into_queue(this_thread,
 			scheduler->ready_queue[FCFS_QUEUE]);
 	else
@@ -395,7 +394,7 @@ DECL_PREFIX int so_signal(unsigned int io)
 	while (crt_thread != INVALID_POP_INFO) {
 		crt_thread->status = READY;
 
-		if (scheduler->use_fcfs)
+		if (scheduler->use_fcfs == True)
 			insert_into_queue(crt_thread,
 				scheduler->ready_queue[FCFS_QUEUE]);
 		else
@@ -469,7 +468,7 @@ DECL_PREFIX void so_end(void)
 	destroy_queue(scheduler->all_threads);
 	destroy_hash(scheduler->thread_hash);
 
-	if (scheduler->enable_log)
+	if (scheduler->enable_log == True)
 		destroy_logger(scheduler->logger);
 
 	free(scheduler);
